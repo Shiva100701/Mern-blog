@@ -24,6 +24,8 @@ connectDB()
 
 // 115.96.218.166/32
 
+// hermanos1@hermanos.com
+
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 

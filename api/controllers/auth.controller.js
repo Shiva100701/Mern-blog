@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
+
+
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
 
@@ -40,7 +42,7 @@ export const signin = async (req, res, next) => {
   try {
     const validUser = await User.findOne({ email });
     if (!validUser) {
-      next(errorHandler(400, "User not Found"));
+       next(errorHandler(400, "User not Found"));
     }
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     const { password: pass, ...rest } = validUser._doc;
@@ -85,8 +87,7 @@ export const googleAuth = async (req, res, next) => {
       const hashPassword = bcryptjs.hashSync(generatedPassword, 10);
 
       const newUser = new User({
-        username:
-          name.toLowerCase().split(" ").join("") +
+        username: name.toLowerCase().split(" ").join("") +
           Math.random().toString(9).slice(-4),
         email,
         password: hashPassword,
