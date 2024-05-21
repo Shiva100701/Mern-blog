@@ -32,7 +32,7 @@ if(req.body.username){
     if(!req.body.username.match(/^[a-zA-Z0-9]+$/)){
         return next(errorHandler(400, 'Username must be only letters and numbers'))
     }
-
+}
     try {
         const updatedUser = await User.findByIdAndUpdate(req.params.userId, {
             $set: {
@@ -47,6 +47,6 @@ if(req.body.username){
     } catch (error) {
         next(error)
     }
-}
+
 
 }
