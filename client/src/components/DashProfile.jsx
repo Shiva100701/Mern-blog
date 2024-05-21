@@ -20,10 +20,11 @@ import {
 } from "../redux/user/userSlice";
 import axios from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import {Link} from 'react-router-dom'
 
 
 function DashProfile() {
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imgFile, setImgFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({})
@@ -230,13 +231,29 @@ try {
           placeholder="password"
           onChange={handleChange}
         />
-        <Button type="submit" gradientDuoTone={"purpleToBlue"} outline>
-          Update  {/* Todo:: Updating when click on updtae */}
+        <Button type="submit" gradientDuoTone={"purpleToBlue"} outline disabled={loading || imageFileUploading}>
+          {loading ? 'loading...' : 'Update'}
         </Button>
+
+        {currentUser.isAdmin && (
+          <Link to={'/create-post'}>
+            <Button
+              type="button"
+              gradientDuoTone={"purpleToPink"}
+              className="w-full"
+            >
+              Create a Post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="text-red-500 flex justify-between mt-5">
-        <span className="cursor-pointer" onClick={()=> setShowModal(true)}>Delete Account</span>
-        <span onClick={handleSignout} className="cursor-pointer">Sign Out</span>
+        <span className="cursor-pointer" onClick={() => setShowModal(true)}>
+          Delete Account
+        </span>
+        <span onClick={handleSignout} className="cursor-pointer">
+          Sign Out
+        </span>
       </div>
       {updateUserSuccess && (
         <Alert color={"success"} className="mt-5">
@@ -254,20 +271,30 @@ try {
         </Alert>
       )}
 
-      <Modal show= {showModal} onClose={()=> setShowModal(false)} popup size={'md'}>
-
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size={"md"}
+      >
         <Modal.Header />
         <ModalBody>
           <div className="text-center">
-              <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-              <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">Are you sure You want to delete your account?</h3>
-              <div className="flex justify-center gap-4">
-                <Button color={'failure'} onClick={handleDelete}> Yes, I'm sure</Button>
-                <Button color={'gray'} onClick={()=> setShowModal(false)}>No, Cancel</Button>
-              </div>
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are you sure You want to delete your account?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color={"failure"} onClick={handleDelete}>
+                {" "}
+                Yes, I'm sure
+              </Button>
+              <Button color={"gray"} onClick={() => setShowModal(false)}>
+                No, Cancel
+              </Button>
+            </div>
           </div>
         </ModalBody>
-
       </Modal>
     </div>
   );
