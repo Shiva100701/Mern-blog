@@ -16,7 +16,7 @@ import {
   updateSuccess,
   updateFailure,
   deleteSuccess,
-  deleteStart, deleteFailure
+  deleteStart, deleteFailure, signoutSuccess
 } from "../redux/user/userSlice";
 import axios from "axios";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -132,7 +132,7 @@ const handleDelete = async()=>{
   try {
     dispatch(deleteStart())
     const res = await axios.delete(`/api/user/delete/${currentUser._id}`)
-    if(res){
+    if(res.status == 200){
       dispatch(deleteSuccess(resizeBy))
     }else{
       dispatch(deleteFailure("Can't dlete the user, Something went wrong!"))
@@ -140,6 +140,23 @@ const handleDelete = async()=>{
   } catch (error) {
     dispatch(deleteFailure(error.message))
   }
+}
+
+const handleSignout = async()=> {
+ 
+try {
+  const res = await axios.post('/api/user/signout')
+  console.log(res);
+  if(res.status == 200){
+    dispatch(signoutSuccess())
+  }else{
+    console.log(res.message);
+  }
+
+
+} catch (error) {
+  console.log(error.message);
+}
 }
 
 
@@ -219,7 +236,7 @@ const handleDelete = async()=>{
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span className="cursor-pointer" onClick={()=> setShowModal(true)}>Delete Account</span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span onClick={handleSignout} className="cursor-pointer">Sign Out</span>
       </div>
       {updateUserSuccess && (
         <Alert color={"success"} className="mt-5">
