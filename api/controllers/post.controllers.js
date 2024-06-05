@@ -35,7 +35,7 @@ export const getPosts = async (req, res, next) => {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.order === "asc" ? 1 : -1;
-    const posts = await Post.find(
+    const posts = await Post.find({
       ...(req.query.userId && { userId: req.query.userId }),
       ...(req.query.category && { userId: req.query.category }),
       ...(req.query.slug && { userId: req.query.slug }),
@@ -46,7 +46,7 @@ export const getPosts = async (req, res, next) => {
           { content: { $regex: req.query.searchTerm, $options: "i" } },
         ],
       })
-    )
+    })
       .sort({ updatedAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
