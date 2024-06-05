@@ -1,3 +1,4 @@
+import axios from "axios";
 import { Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -6,15 +7,19 @@ import { Link } from "react-router-dom";
 function DashPosts() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
-  console.log(userPosts);
+  // console.log(userPosts);
+  const[showMore, setShowMore] = useState(true)
   useEffect(() => {
     const fetchPost = async () => {
       try {
         const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
         const data = await res.json();
-        console.log(data);
+        // console.log(data.posts);
         if (res.ok) {
           setUserPosts(data.posts);
+          if(data.posts.length < 9){
+            setShowMore(false)
+          }
         }
       } catch (error) {
         console.log(error.message);
@@ -24,6 +29,28 @@ function DashPosts() {
       fetchPost();
     }
   }, [currentUser._id]);
+
+  // console.log(userPost);
+
+  const handleShowMore = async()=>{
+    const startIndex = userPosts.length;
+
+    try {
+      const res = await axios.get(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`)
+      const newPosts = res.data.posts
+      if (newPosts) {
+        setUserPosts((prev) => [...prev, ...newPosts]);
+        if (newPosts.length < 9) {
+          setShowMore(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+      }
+
+
 
 
 
@@ -84,6 +111,13 @@ function DashPosts() {
               </Table.Body>
             ))}
           </Table>
+          {
+            showMore && (
+              <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
+                Show more
+              </button>
+            )
+          }
         </>
       ) : (
         <p> You have no posts yet!</p>
